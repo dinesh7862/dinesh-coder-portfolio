@@ -88,11 +88,11 @@ export default function AboutSection() {
               >
                 <div className="aspect-square relative overflow-hidden">
                   <Image
-                    src="/hero.png"
+                    src="/dinesh.png"
                     alt="Dinesh Coder"
                     fill
-                    className="object-cover"
-                    style={{ filter: "saturate(1.3) brightness(0.9)" }}
+                    className="object-cover object-top"
+                    style={{ filter: "brightness(1.02) contrast(1.05) saturate(1.1)" }}
                   />
                   {/* Bottom gradient */}
                   <div
