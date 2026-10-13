@@ -1,41 +1,72 @@
 "use client";
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+
+import { useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValueEvent,
+  useScroll,
+  useSpring,
+} from "framer-motion";
+import { EASE } from "./Reveal";
+import { scrollToTop } from "./SmoothScroll";
+
+const SIZE = 48;
+const RADIUS = 21;
 
 export default function BackToTop() {
   const [visible, setVisible] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 26,
+    restDelta: 0.001,
+  });
 
-  useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 400);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    setVisible(v > 0.12 && v < 0.995);
+  });
 
   return (
     <AnimatePresence>
       {visible && (
         <motion.button
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.5 }}
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="back-to-top cursor-hover"
+          type="button"
           aria-label="Back to top"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-6 z-40 grid place-items-center rounded-full sm:right-8"
+          style={{
+            width: SIZE,
+            height: SIZE,
+            border: "1px solid var(--line-2)",
+            background: "rgba(7,7,10,0.6)",
+            backdropFilter: "blur(10px)",
+          }}
+          initial={{ opacity: 0, y: 16, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 16, scale: 0.9 }}
+          whileHover={{ y: -3, borderColor: "var(--accent-line)" }}
+          transition={{ duration: 0.5, ease: EASE }}
         >
           <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            width={SIZE}
+            height={SIZE}
+            viewBox={`0 0 ${SIZE} ${SIZE}`}
+            className="absolute inset-0 -rotate-90"
+            aria-hidden="true"
           >
-            <polyline points="18,15 12,9 6,15" />
+            <motion.circle
+              cx={SIZE / 2}
+              cy={SIZE / 2}
+              r={RADIUS}
+              fill="none"
+              stroke="var(--accent)"
+              strokeWidth="1"
+              strokeLinecap="round"
+              style={{ pathLength: progress }}
+            />
           </svg>
+          <span style={{ fontSize: "0.85rem", color: "var(--text)" }}>↑</span>
         </motion.button>
       )}
     </AnimatePresence>

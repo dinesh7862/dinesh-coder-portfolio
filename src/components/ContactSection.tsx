@@ -1,336 +1,247 @@
 "use client";
-import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { EASE, MaskText, Reveal } from "./Reveal";
+import Magnetic from "./Magnetic";
+
+const DETAILS = [
+  {
+    label: "Email",
+    value: "dineshkumar65418@gmail.com",
+    href: "mailto:dineshkumar65418@gmail.com",
+  },
+  { label: "Phone", value: "+91 70091 10577", href: "tel:+917009110577" },
+  {
+    label: "Location",
+    value: "Mandi, Himachal Pradesh, IN",
+    href: "https://maps.google.com/?q=Mandi,Himachal+Pradesh",
+  },
+];
+
+const LABEL_STYLE: React.CSSProperties = {
+  fontSize: "0.64rem",
+  letterSpacing: "0.18em",
+  textTransform: "uppercase",
+  color: "var(--muted-2)",
+};
 
 export default function ContactSection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
-  const [formState, setFormState] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    await new Promise((r) => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 1200));
     setSending(false);
     setSent(true);
-    setFormState({ name: "", email: "", message: "" });
+    setForm({ name: "", email: "", message: "" });
   };
-
-  const contactItems = [
-    {
-      icon: "📧",
-      label: "Email",
-      value: "dineshkumar65418@gmail.com",
-      color: "var(--neon-blue)",
-      href: "mailto:dineshkumar65418@gmail.com",
-    },
-    {
-      icon: "📱",
-      label: "Mobile",
-      value: "+91 7009110577",
-      color: "var(--neon-purple)",
-      href: "tel:+917009110577",
-    },
-    {
-      icon: "📍",
-      label: "Location",
-      value: "Mandi, Himachal Pradesh, India",
-      color: "var(--neon-cyan)",
-      href: "https://maps.google.com/?q=Mandi,Himachal+Pradesh",
-    },
-  ];
 
   return (
     <section
       id="contact"
-      ref={ref}
-      className="relative py-32 overflow-hidden"
-      style={{ background: "var(--bg-dark)" }}
+      className="section"
+      style={{ borderTop: "1px solid var(--line)" }}
     >
-      {/* Aurora */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          width: "600px",
-          height: "600px",
-          background:
-            "radial-gradient(circle, rgba(0,212,255,0.07) 0%, transparent 70%)",
-          top: "-100px",
-          right: "-100px",
-          borderRadius: "50%",
-          filter: "blur(80px)",
-        }}
-      />
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          width: "500px",
-          height: "500px",
-          background:
-            "radial-gradient(circle, rgba(168,85,247,0.07) 0%, transparent 70%)",
-          bottom: "-100px",
-          left: "-100px",
-          borderRadius: "50%",
-          filter: "blur(80px)",
-        }}
-      />
+      <div className="container-x">
+        <div className="grid gap-16 lg:grid-cols-[1fr_1.05fr] lg:gap-24">
+          {/* Left */}
+          <div>
+            <Reveal>
+              <span className="eyebrow">Contact</span>
+            </Reveal>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-20"
-        >
-          <span className="section-label">
-            <span>{"<"}</span> Contact <span>{"/ >"}</span>
-          </span>
-          <h2
-            className="text-5xl md:text-6xl font-black mt-4 gradient-text"
-            style={{ fontFamily: "Space Grotesk" }}
-          >
-            Let&apos;s Build Together
-          </h2>
-          <p
-            className="mt-4 text-lg max-w-xl mx-auto"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            Ready to create something extraordinary? Let&apos;s connect and build the future together.
-          </p>
-        </motion.div>
+            <h2 className="display h2 mt-6">
+              <MaskText text="Let's make" delay={0.05} />
+              <br />
+              <MaskText text="something *good*." delay={0.18} />
+            </h2>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* Contact info */}
-          <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="flex flex-col gap-6"
-          >
-            <div
-              className="glass-strong rounded-3xl p-8"
-              style={{ border: "1px solid rgba(0,212,255,0.1)" }}
-            >
-              <h3
-                className="text-2xl font-bold mb-6"
-                style={{ fontFamily: "Space Grotesk", color: "var(--text-primary)" }}
-              >
-                Get In Touch
-              </h3>
-              <div className="flex flex-col gap-5">
-                {contactItems.map((item, i) => (
-                  <motion.div
-                    key={item.label}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={inView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ delay: 0.3 + i * 0.1 }}
+            <Reveal delay={0.18}>
+              <p className="lead mt-8">
+                Tell me what you&apos;re building. I reply to every serious
+                enquiry within a day, usually with a few questions and a rough
+                plan.
+              </p>
+            </Reveal>
+
+            <div className="mt-12" style={{ borderTop: "1px solid var(--line)" }}>
+              {DETAILS.map((item, i) => (
+                <motion.a
+                  key={item.label}
+                  href={item.href}
+                  target={item.href.startsWith("http") ? "_blank" : undefined}
+                  rel="noreferrer"
+                  className="row-item group flex items-center justify-between gap-6 py-6"
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 0.7, delay: i * 0.07, ease: EASE }}
+                >
+                  <span
+                    className="mono shrink-0"
+                    style={{ ...LABEL_STYLE, width: "5.5rem" }}
                   >
-                    <a
-                      href={item.href}
-                      target={item.href?.startsWith("http") ? "_blank" : undefined}
-                      rel={item.href?.startsWith("http") ? "noopener noreferrer" : undefined}
-                      className="flex items-center gap-4 group"
-                      style={{ textDecoration: "none" }}
-                    >
-                      <div
-                        className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl flex-shrink-0 transition-all duration-300 group-hover:scale-110"
-                        style={{
-                          background: `${item.color}15`,
-                          border: `1px solid ${item.color}30`,
-                          boxShadow: `0 0 0 0 ${item.color}`,
-                          transition: "all 0.3s ease",
-                        }}
-                        onMouseEnter={(e) => {
-                          (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 16px ${item.color}40`;
-                          (e.currentTarget as HTMLDivElement).style.background = `${item.color}25`;
-                        }}
-                        onMouseLeave={(e) => {
-                          (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
-                          (e.currentTarget as HTMLDivElement).style.background = `${item.color}15`;
-                        }}
-                      >
-                        {item.icon}
-                      </div>
-                      <div>
-                        <div
-                          className="text-xs mb-0.5"
-                          style={{
-                            color: "var(--text-secondary)",
-                            fontFamily: "JetBrains Mono",
-                            letterSpacing: "0.1em",
-                          }}
-                        >
-                          {item.label}
-                        </div>
-                        <div
-                          className="font-medium transition-all duration-200"
-                          style={{ color: item.color }}
-                        >
-                          {item.value}
-                        </div>
-                      </div>
-                    </a>
-                  </motion.div>
-                ))}
-              </div>
+                    {item.label}
+                  </span>
+                  <span
+                    className="flex-1 text-sm transition-transform duration-500 group-hover:translate-x-1"
+                    style={{ color: "var(--text)" }}
+                  >
+                    {item.value}
+                  </span>
+                  <span
+                    className="transition-all duration-500 group-hover:translate-x-1 group-hover:text-[var(--accent)]"
+                    style={{ color: "var(--muted-2)", fontSize: "0.8rem" }}
+                  >
+                    ↗
+                  </span>
+                </motion.a>
+              ))}
             </div>
 
-            {/* Status card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.6 }}
-              className="glass rounded-2xl p-6"
-              style={{ border: "1px solid rgba(16,185,129,0.2)" }}
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{
-                    background: "var(--neon-emerald)",
-                    boxShadow: "0 0 10px var(--neon-emerald)",
-                    animation: "pulseGlow 2s ease-in-out infinite",
-                  }}
-                />
+            <Reveal delay={0.15}>
+              <div className="mt-10 flex items-center gap-3">
+                <span className="dot-live" />
                 <span
-                  className="text-sm font-semibold"
-                  style={{ color: "var(--neon-emerald)" }}
+                  className="mono"
+                  style={{ fontSize: "0.7rem", color: "var(--muted)" }}
                 >
-                  Currently Available
+                  Currently taking on 2 new projects this quarter
                 </span>
               </div>
-              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                Open to freelance projects, collaborations, and exciting opportunities.
-                Response time: <span style={{ color: "var(--neon-blue)" }}>within 24 hours</span>
-              </p>
-            </motion.div>
-          </motion.div>
+            </Reveal>
+          </div>
 
-          {/* Contact form */}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: 0.3, duration: 0.8 }}
-          >
-            <div
-              className="glass-strong rounded-3xl p-8"
-              style={{ border: "1px solid rgba(168,85,247,0.1)" }}
-            >
-              {sent ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-12"
-                >
-                  <div className="text-6xl mb-4">✦</div>
-                  <h3
-                    className="text-2xl font-bold gradient-text mb-2"
-                    style={{ fontFamily: "Space Grotesk" }}
+          {/* Right — form */}
+          <Reveal delay={0.1}>
+            <div className="card p-8 sm:p-10">
+              <AnimatePresence mode="wait">
+                {sent ? (
+                  <SuccessState key="done" onReset={() => setSent(false)} />
+                ) : (
+                  <motion.form
+                    key="form"
+                    onSubmit={submit}
+                    className="flex flex-col gap-7"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.4 }}
                   >
-                    Message Sent!
-                  </h3>
-                  <p style={{ color: "var(--text-secondary)" }}>
-                    I&apos;ll get back to you within 24 hours.
-                  </p>
-                  <button
-                    onClick={() => setSent(false)}
-                    className="btn-primary mt-6"
-                    style={{ fontSize: "0.85rem" }}
-                  >
-                    <span>Send Another</span>
-                  </button>
-                </motion.div>
-              ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                  <h3
-                    className="text-2xl font-bold mb-2"
-                    style={{ fontFamily: "Space Grotesk", color: "var(--text-primary)" }}
-                  >
-                    Send Message
-                  </h3>
-                  <div>
-                    <label
-                      className="block text-xs mb-2"
-                      style={{
-                        color: "var(--text-secondary)",
-                        fontFamily: "JetBrains Mono",
-                        letterSpacing: "0.1em",
-                      }}
-                    >
-                      YOUR NAME
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      className="form-input"
-                      placeholder="John Doe"
-                      value={formState.name}
-                      onChange={(e) =>
-                        setFormState((p) => ({ ...p, name: e.target.value }))
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label
-                      className="block text-xs mb-2"
-                      style={{
-                        color: "var(--text-secondary)",
-                        fontFamily: "JetBrains Mono",
-                        letterSpacing: "0.1em",
-                      }}
-                    >
-                      EMAIL ADDRESS
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      className="form-input"
-                      placeholder="john@example.com"
-                      value={formState.email}
-                      onChange={(e) =>
-                        setFormState((p) => ({ ...p, email: e.target.value }))
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label
-                      className="block text-xs mb-2"
-                      style={{
-                        color: "var(--text-secondary)",
-                        fontFamily: "JetBrains Mono",
-                        letterSpacing: "0.1em",
-                      }}
-                    >
-                      YOUR MESSAGE
-                    </label>
-                    <textarea
-                      required
-                      rows={5}
-                      className="form-input resize-none"
-                      placeholder="Tell me about your project..."
-                      value={formState.message}
-                      onChange={(e) =>
-                        setFormState((p) => ({ ...p, message: e.target.value }))
-                      }
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="btn-primary"
-                    disabled={sending}
-                    style={{ opacity: sending ? 0.7 : 1 }}
-                  >
-                    <span>{sending ? "Sending..." : "Send Message ✦"}</span>
-                  </button>
-                </form>
-              )}
+                    <div className="field-wrap">
+                      <label htmlFor="name" className="mono block" style={LABEL_STYLE}>
+                        Your name
+                      </label>
+                      <input
+                        id="name"
+                        required
+                        className="field"
+                        placeholder="Jane Doe"
+                        value={form.name}
+                        onChange={(e) =>
+                          setForm((p) => ({ ...p, name: e.target.value }))
+                        }
+                      />
+                    </div>
+
+                    <div className="field-wrap">
+                      <label htmlFor="email" className="mono block" style={LABEL_STYLE}>
+                        Email
+                      </label>
+                      <input
+                        id="email"
+                        type="email"
+                        required
+                        className="field"
+                        placeholder="jane@company.com"
+                        value={form.email}
+                        onChange={(e) =>
+                          setForm((p) => ({ ...p, email: e.target.value }))
+                        }
+                      />
+                    </div>
+
+                    <div className="field-wrap">
+                      <label htmlFor="message" className="mono block" style={LABEL_STYLE}>
+                        Project
+                      </label>
+                      <textarea
+                        id="message"
+                        required
+                        rows={4}
+                        className="field"
+                        placeholder="A few lines about what you need…"
+                        value={form.message}
+                        onChange={(e) =>
+                          setForm((p) => ({ ...p, message: e.target.value }))
+                        }
+                      />
+                    </div>
+
+                    <Magnetic strength={0.12} className="w-full">
+                      <button
+                        type="submit"
+                        disabled={sending}
+                        className="btn btn--solid w-full justify-center"
+                        style={{ opacity: sending ? 0.65 : 1 }}
+                      >
+                        <span>{sending ? "Sending…" : "Send message"}</span>
+                        {!sending && <span className="arrow">→</span>}
+                      </button>
+                    </Magnetic>
+                  </motion.form>
+                )}
+              </AnimatePresence>
             </div>
-          </motion.div>
+          </Reveal>
         </div>
       </div>
     </section>
+  );
+}
+
+function SuccessState({ onReset }: { onReset: () => void }) {
+  return (
+    <motion.div
+      className="flex flex-col items-start gap-5 py-4"
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.6, ease: EASE }}
+    >
+      <svg width="46" height="46" viewBox="0 0 46 46" fill="none" aria-hidden="true">
+        <motion.circle
+          cx="23"
+          cy="23"
+          r="21"
+          stroke="var(--accent)"
+          strokeWidth="1"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 0.9, ease: EASE }}
+        />
+        <motion.path
+          d="M15 23.5l5.5 5.5L31 17"
+          stroke="var(--accent)"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 0.5, delay: 0.5, ease: EASE }}
+        />
+      </svg>
+      <h3 className="display h3">Message received.</h3>
+      <p className="text-sm" style={{ color: "var(--muted)" }}>
+        Thanks for reaching out — I&apos;ll get back to you within 24 hours.
+      </p>
+      <button type="button" className="btn btn--ghost mt-2" onClick={onReset}>
+        <span>Send another</span>
+      </button>
+    </motion.div>
   );
 }

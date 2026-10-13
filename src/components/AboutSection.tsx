@@ -1,262 +1,152 @@
 "use client";
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+
 import Image from "next/image";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Counter, EASE, MaskText, Reveal } from "./Reveal";
+
+const STATS = [
+  { value: 50, suffix: "+", label: "Projects shipped" },
+  { value: 3, suffix: "+", label: "Years experience" },
+  { value: 30, suffix: "+", label: "Happy clients" },
+  { value: 10, suffix: "+", label: "AI builds" },
+];
+
+const SOCIALS = [
+  { label: "GitHub", href: "https://github.com" },
+  { label: "LinkedIn", href: "https://linkedin.com" },
+  { label: "X / Twitter", href: "https://x.com" },
+];
 
 export default function AboutSection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
-
-  const stats = [
-    { num: "50+", label: "Projects Completed", icon: "🚀" },
-    { num: "3+", label: "Years Experience", icon: "⚡" },
-    { num: "30+", label: "Happy Clients", icon: "✦" },
-    { num: "10+", label: "AI Projects", icon: "🤖" },
-  ];
+  const imageWrap = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: imageWrap,
+    offset: ["start end", "end start"],
+  });
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
 
   return (
-    <section
-      id="about"
-      ref={ref}
-      className="relative py-32 overflow-hidden"
-      style={{
-        background:
-          "linear-gradient(180deg, var(--bg-dark) 0%, rgba(5,0,15,1) 100%)",
-      }}
-    >
-      {/* Aurora blob */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          width: "700px",
-          height: "700px",
-          background:
-            "radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%)",
-          bottom: "-200px",
-          left: "-200px",
-          borderRadius: "50%",
-          filter: "blur(80px)",
-        }}
-      />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-20"
-        >
-          <span className="section-label">
-            <span>{"<"}</span> About <span>{"/ >"}</span>
-          </span>
-          <h2
-            className="text-5xl md:text-6xl font-black mt-4 gradient-text"
-            style={{ fontFamily: "Space Grotesk" }}
-          >
-            The Story
-          </h2>
-        </motion.div>
-
-        {/* Main glass card */}
-        <div className="grid lg:grid-cols-2 gap-10 items-center">
-          {/* Profile visual */}
+    <section id="about" className="section" style={{ borderTop: "1px solid var(--line)" }}>
+      <div className="container-x">
+        <div className="grid items-start gap-14 lg:grid-cols-[0.82fr_1fr] lg:gap-24">
+          {/* Portrait */}
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="flex justify-center"
+            ref={imageWrap}
+            className="relative"
+            initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0.4 }}
+            whileInView={{ clipPath: "inset(0 0 0% 0)", opacity: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 1.3, ease: EASE }}
           >
-            <div className="relative" style={{ maxWidth: "380px", width: "100%" }}>
-              {/* Glow */}
+            <div
+              className="relative overflow-hidden"
+              style={{ aspectRatio: "4 / 5", borderRadius: 22, border: "1px solid var(--line)" }}
+            >
+              <motion.div className="absolute inset-[-6%]" style={{ y: imageY }}>
+                <Image
+                  src="/dinesh.png"
+                  alt="Dinesh Coder"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  className="object-cover object-top"
+                  style={{ filter: "grayscale(0.25) contrast(1.04) brightness(0.98)" }}
+                />
+              </motion.div>
               <div
-                className="absolute inset-0"
+                className="pointer-events-none absolute inset-0"
                 style={{
-                  background: "radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%)",
-                  borderRadius: "30px",
-                  filter: "blur(30px)",
-                  transform: "scale(1.2)",
+                  background:
+                    "linear-gradient(180deg, transparent 45%, rgba(7,7,10,0.85) 100%)",
                 }}
               />
-              {/* Card */}
-              <div
-                className="glass-strong rounded-3xl overflow-hidden relative"
-                style={{
-                  border: "1px solid rgba(0,212,255,0.15)",
-                  boxShadow: "0 30px 80px rgba(0,0,0,0.4)",
-                }}
-              >
-                <div className="aspect-square relative overflow-hidden">
-                  <Image
-                    src="/dinesh.png"
-                    alt="Dinesh Coder"
-                    fill
-                    className="object-cover object-top"
-                    style={{ filter: "brightness(1.02) contrast(1.05) saturate(1.1)" }}
-                  />
-                  {/* Bottom gradient */}
-                  <div
-                    className="absolute bottom-0 left-0 right-0 h-1/2"
-                    style={{
-                      background:
-                        "linear-gradient(transparent, rgba(2,0,8,0.9))",
-                    }}
-                  />
-                  {/* Name overlay */}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <div
-                      className="font-black text-2xl"
-                      style={{ fontFamily: "Space Grotesk", color: "white" }}
-                    >
-                      Dinesh Coder
-                    </div>
-                    <div
-                      className="text-xs mt-1"
-                      style={{
-                        fontFamily: "JetBrains Mono",
-                        color: "var(--neon-blue)",
-                      }}
-                    >
-                      Full Stack Developer & AI Engineer
-                    </div>
-                  </div>
-                </div>
-
-                {/* Holographic code panel */}
-                <div className="holo-panel m-4 rounded-xl">
-                  <div style={{ lineHeight: 1.8 }}>
-                    <span style={{ color: "var(--neon-purple)" }}>const</span>{" "}
-                    <span style={{ color: "var(--neon-blue)" }}>developer</span>{" "}
-                    <span style={{ color: "white" }}>=</span>{" "}
-                    <span style={{ color: "white" }}>{"{"}</span>
-                    <br />
-                    {"  "}
-                    <span style={{ color: "var(--neon-cyan)" }}>name</span>
-                    <span style={{ color: "white" }}>:</span>{" "}
-                    <span style={{ color: "var(--neon-emerald)" }}>
-                      &apos;Dinesh Coder&apos;
-                    </span>
-                    <span style={{ color: "white" }}>,</span>
-                    <br />
-                    {"  "}
-                    <span style={{ color: "var(--neon-cyan)" }}>passion</span>
-                    <span style={{ color: "white" }}>:</span>{" "}
-                    <span style={{ color: "var(--neon-emerald)" }}>
-                      &apos;Building the Future&apos;
-                    </span>
-                    <span style={{ color: "white" }}>,</span>
-                    <br />
-                    {"  "}
-                    <span style={{ color: "var(--neon-cyan)" }}>mode</span>
-                    <span style={{ color: "white" }}>:</span>{" "}
-                    <span style={{ color: "var(--neon-pink)" }}>&apos;AI_GOD&apos;</span>
-                    <br />
-                    <span style={{ color: "white" }}>{"}"}</span>
-                  </div>
-                </div>
+              <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
+                <span className="mono" style={{ fontSize: "0.66rem", letterSpacing: "0.18em", color: "var(--muted)" }}>
+                  MANDI · IN
+                </span>
+                <span className="mono" style={{ fontSize: "0.66rem", letterSpacing: "0.18em", color: "var(--muted)" }}>
+                  GMT +5:30
+                </span>
               </div>
             </div>
           </motion.div>
 
-          {/* Text content */}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="flex flex-col gap-8"
-          >
-            {/* Description */}
-            <div
-              className="glass-strong rounded-3xl p-8"
-              style={{ border: "1px solid rgba(168,85,247,0.15)" }}
-            >
-              <p
-                className="text-lg leading-relaxed"
-                style={{ color: "var(--text-secondary)", lineHeight: "1.9" }}
-              >
-                Hi, I&apos;m{" "}
-                <span
-                  className="font-bold"
-                  style={{ color: "var(--neon-blue)" }}
-                >
-                  Dinesh Coder
-                </span>
-                , a passionate developer focused on creating{" "}
-                <span style={{ color: "var(--neon-purple)" }}>modern websites</span>,{" "}
-                <span style={{ color: "var(--neon-cyan)" }}>AI assistants</span>,{" "}
-                <span style={{ color: "var(--neon-pink)" }}>automation systems</span>{" "}
-                and innovative digital experiences that push boundaries.
-              </p>
-              <p
-                className="text-lg leading-relaxed mt-4"
-                style={{ color: "var(--text-secondary)", lineHeight: "1.9" }}
-              >
-                I blend cutting-edge technology with beautiful design to create
-                solutions that don&apos;t just work — they{" "}
-                <span style={{ color: "var(--neon-emerald)" }}>
-                  inspire and amaze
-                </span>
-                .
-              </p>
-            </div>
+          {/* Copy */}
+          <div>
+            <Reveal>
+              <span className="eyebrow">About</span>
+            </Reveal>
 
-            {/* Stats grid */}
-            <div className="grid grid-cols-2 gap-4">
-              {stats.map((s, i) => (
+            <h2 className="display h2 mt-6">
+              <MaskText text="Design and engineering," delay={0.05} />
+              <br />
+              <MaskText text="done *properly*." delay={0.18} />
+            </h2>
+
+            <Reveal delay={0.15}>
+              <p className="lead mt-8">
+                I work across the whole stack — from the first sketch to the
+                last deploy. My focus is simple: fast interfaces, honest motion,
+                and systems that stay maintainable long after launch.
+              </p>
+            </Reveal>
+
+            <Reveal delay={0.22}>
+              <p className="mt-5" style={{ color: "var(--muted)", lineHeight: 1.8, maxWidth: "46ch" }}>
+                Lately I&apos;ve been building AI assistants, booking platforms
+                and automation that removes the boring parts of a business —
+                always with the same attention to detail on the front end.
+              </p>
+            </Reveal>
+
+            {/* Stats */}
+            <div
+              className="mt-14 grid grid-cols-2"
+              style={{ borderTop: "1px solid var(--line)", borderLeft: "1px solid var(--line)" }}
+            >
+              {STATS.map((stat, i) => (
                 <motion.div
-                  key={s.label}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={inView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ delay: 0.6 + i * 0.1 }}
-                  whileHover={{ scale: 1.03, y: -3 }}
-                  className="glass rounded-2xl p-5 cursor-hover"
-                  style={{ border: "1px solid rgba(255,255,255,0.06)" }}
+                  key={stat.label}
+                  className="px-6 py-7"
+                  style={{
+                    borderRight: "1px solid var(--line)",
+                    borderBottom: "1px solid var(--line)",
+                  }}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.8, delay: i * 0.08, ease: EASE }}
                 >
-                  <div className="text-2xl mb-1">{s.icon}</div>
-                  <div
-                    className="text-2xl font-black gradient-text"
-                    style={{ fontFamily: "Space Grotesk" }}
-                  >
-                    {s.num}
+                  <div className="display" style={{ fontSize: "clamp(2rem, 3.4vw, 2.8rem)" }}>
+                    <Counter to={stat.value} suffix={stat.suffix} />
                   </div>
                   <div
-                    className="text-xs mt-1"
-                    style={{
-                      color: "var(--text-secondary)",
-                      fontFamily: "JetBrains Mono",
-                    }}
+                    className="mono mt-2"
+                    style={{ fontSize: "0.66rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--muted-2)" }}
                   >
-                    {s.label}
+                    {stat.label}
                   </div>
                 </motion.div>
               ))}
             </div>
 
-            {/* Social links */}
-            <div className="flex gap-4">
-              {[
-                { label: "GitHub", icon: "⌥", color: "var(--text-secondary)" },
-                { label: "LinkedIn", icon: "◈", color: "var(--neon-blue)" },
-                { label: "Twitter", icon: "✕", color: "var(--neon-cyan)" },
-              ].map((s) => (
-                <motion.button
-                  key={s.label}
-                  whileHover={{ scale: 1.1, y: -3 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="glass flex items-center gap-2 px-4 py-2 rounded-xl cursor-hover"
-                  style={{
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    color: s.color,
-                    fontSize: "0.85rem",
-                    fontFamily: "Space Grotesk",
-                  }}
-                >
-                  <span>{s.icon}</span>
-                  <span>{s.label}</span>
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
+            {/* Socials */}
+            <Reveal delay={0.1}>
+              <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3">
+                {SOCIALS.map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="link-u text-sm"
+                  >
+                    {social.label} ↗
+                  </a>
+                ))}
+              </div>
+            </Reveal>
+          </div>
         </div>
       </div>
     </section>

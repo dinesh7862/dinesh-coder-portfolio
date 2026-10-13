@@ -1,137 +1,140 @@
 "use client";
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
 
-const skills = [
-  { name: "HTML", icon: "🌐", color: "#f97316", level: 95 },
-  { name: "CSS", icon: "🎨", color: "#06b6d4", level: 92 },
-  { name: "JavaScript", icon: "⚡", color: "#f59e0b", level: 90 },
-  { name: "React", icon: "⚛️", color: "#00d4ff", level: 88 },
-  { name: "Next.js", icon: "▲", color: "#ffffff", level: 85 },
-  { name: "Node.js", icon: "🟢", color: "#10b981", level: 82 },
-  { name: "Python", icon: "🐍", color: "#a855f7", level: 80 },
-  { name: "AI Dev", icon: "🤖", color: "#ec4899", level: 78 },
-  { name: "UI/UX", icon: "✦", color: "#f97316", level: 85 },
-  { name: "Three.js", icon: "🔮", color: "#06b6d4", level: 72 },
-  { name: "GSAP", icon: "🎬", color: "#a855f7", level: 75 },
-  { name: "TypeScript", icon: "📘", color: "#00d4ff", level: 82 },
+import { motion } from "framer-motion";
+import { EASE, MaskText, Reveal } from "./Reveal";
+import Marquee from "./Marquee";
+
+const GROUPS = [
+  {
+    title: "Frontend",
+    items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Three.js"],
+  },
+  {
+    title: "Backend",
+    items: ["Node.js", "Python", "FastAPI", "PostgreSQL", "MongoDB", "REST & GraphQL"],
+  },
+  {
+    title: "AI & Automation",
+    items: ["OpenAI API", "LangChain", "RAG pipelines", "Vector DBs", "n8n workflows", "Whisper"],
+  },
+  {
+    title: "Design & Tooling",
+    items: ["Figma", "GSAP", "Lenis", "Git", "Docker", "Vercel"],
+  },
+];
+
+const TICKER = [
+  "React",
+  "Next.js",
+  "TypeScript",
+  "Three.js",
+  "Node",
+  "Python",
+  "FastAPI",
+  "PostgreSQL",
+  "OpenAI",
+  "LangChain",
+  "Docker",
+  "Figma",
 ];
 
 export default function SkillsSection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
-
   return (
-    <section
-      id="skills"
-      ref={ref}
-      className="relative py-32 overflow-hidden"
-      style={{ background: "var(--bg-dark)" }}
-    >
-      {/* Aurora */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          width: "600px",
-          height: "600px",
-          background: "radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%)",
-          top: "-100px",
-          right: "-100px",
-          borderRadius: "50%",
-          filter: "blur(60px)",
-        }}
-      />
+    <section id="skills" className="section" style={{ borderTop: "1px solid var(--line)" }}>
+      <div className="container-x">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <Reveal>
+              <span className="eyebrow">Stack</span>
+            </Reveal>
+            <h2 className="display h2 mt-6">
+              <MaskText text="Tools I reach for," delay={0.05} />
+              <br />
+              <MaskText text="again and *again*." delay={0.18} />
+            </h2>
+          </div>
+          <Reveal delay={0.2}>
+            <p className="lead">
+              A deliberately small toolkit — chosen for speed, clarity and how
+              well it holds up under real traffic.
+            </p>
+          </Reveal>
+        </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-20"
-        >
-          <span className="section-label">
-            <span>{"<"}</span> Skills <span>{"/ >"}</span>
-          </span>
-          <h2
-            className="text-5xl md:text-6xl font-black mt-4 gradient-text"
-            style={{ fontFamily: "Space Grotesk" }}
-          >
-            Tech Arsenal
-          </h2>
-          <p
-            className="mt-4 text-lg max-w-xl mx-auto"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            Cutting-edge tools and technologies I wield to craft digital excellence
-          </p>
-        </motion.div>
+        <div className="mt-20 grid gap-x-14 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+          {GROUPS.map((group, gi) => (
+            <div key={group.title}>
+              <motion.h3
+                className="mono"
+                style={{
+                  fontSize: "0.66rem",
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: "var(--muted-2)",
+                  paddingBottom: 14,
+                }}
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.6 }}
+                transition={{ duration: 0.7, delay: gi * 0.06, ease: EASE }}
+              >
+                {group.title}
+              </motion.h3>
 
-        {/* Skills grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {skills.map((skill, i) => (
-            <motion.div
-              key={skill.name}
-              initial={{ opacity: 0, scale: 0.8, y: 20 }}
-              animate={inView ? { opacity: 1, scale: 1, y: 0 } : {}}
-              transition={{ delay: i * 0.06, duration: 0.5 }}
-              whileHover={{ scale: 1.05, y: -5 }}
-              className="glass rounded-2xl p-5 cursor-hover"
-              style={{
-                border: `1px solid rgba(${
-                  skill.color === "#00d4ff"
-                    ? "0,212,255"
-                    : skill.color === "#a855f7"
-                    ? "168,85,247"
-                    : skill.color === "#06b6d4"
-                    ? "6,182,212"
-                    : skill.color === "#ec4899"
-                    ? "236,72,153"
-                    : skill.color === "#10b981"
-                    ? "16,185,129"
-                    : "249,115,22"
-                },0.15)`,
-                transition: "all 0.3s ease",
-              }}
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-2xl">{skill.icon}</span>
-                <span
-                  className="font-semibold"
-                  style={{
-                    fontFamily: "JetBrains Mono",
-                    color: skill.color,
-                    fontSize: "0.9rem",
-                  }}
-                >
-                  {skill.name}
-                </span>
-              </div>
-              {/* Level bar */}
-              <div
-                className="w-full h-1 rounded-full"
-                style={{ background: "rgba(255,255,255,0.06)" }}
-              >
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={inView ? { width: `${skill.level}%` } : {}}
-                  transition={{ delay: i * 0.06 + 0.4, duration: 0.8, ease: "easeOut" }}
-                  className="h-full rounded-full"
-                  style={{
-                    background: `linear-gradient(90deg, ${skill.color}, ${skill.color}88)`,
-                    boxShadow: `0 0 8px ${skill.color}44`,
-                  }}
-                />
-              </div>
-              <div
-                className="text-right text-xs mt-1"
-                style={{ color: "var(--text-secondary)", fontFamily: "JetBrains Mono" }}
-              >
-                {skill.level}%
-              </div>
-            </motion.div>
+              <ul className="flex flex-col" style={{ borderTop: "1px solid var(--line)" }}>
+                {group.items.map((item, i) => (
+                  <motion.li
+                    key={item}
+                    className="group flex items-center justify-between"
+                    style={{
+                      borderBottom: "1px solid var(--line)",
+                      paddingBlock: 13,
+                      cursor: "default",
+                    }}
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.4 }}
+                    transition={{
+                      duration: 0.7,
+                      delay: gi * 0.06 + i * 0.045,
+                      ease: EASE,
+                    }}
+                  >
+                    <span
+                      className="text-sm transition-colors duration-500"
+                      style={{ color: "var(--text)" }}
+                    >
+                      {item}
+                    </span>
+                    <span
+                      className="opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2"
+                      style={{ color: "var(--accent)", fontSize: "0.8rem" }}
+                    >
+                      ✦
+                    </span>
+                  </motion.li>
+                ))}
+              </ul>
+            </div>
           ))}
         </div>
+      </div>
+
+      {/* Ticker */}
+      <div className="mt-24" style={{ borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)", paddingBlock: 28 }}>
+        <Marquee speed={52}>
+          {TICKER.map((word) => (
+            <span key={word} className="flex items-center">
+              <span
+                className="display"
+                style={{ fontSize: "clamp(1.4rem, 2.6vw, 2.1rem)", color: "var(--muted-2)", paddingInline: 22 }}
+              >
+                {word}
+              </span>
+              <span style={{ color: "var(--accent)", opacity: 0.5 }}>✦</span>
+            </span>
+          ))}
+        </Marquee>
       </div>
     </section>
   );

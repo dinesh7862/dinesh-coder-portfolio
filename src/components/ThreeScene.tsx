@@ -1,99 +1,135 @@
 "use client";
-import { useEffect, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Sphere, MeshDistortMaterial, Float, Stars } from "@react-three/drei";
+
+import { useEffect, useMemo, useRef } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { MeshDistortMaterial } from "@react-three/drei";
 import * as THREE from "three";
 
-function FloatingOrb({ position, color, speed = 1 }: {
-  position: [number, number, number];
-  color: string;
-  speed?: number;
-}) {
-  const meshRef = useRef<THREE.Mesh>(null);
+/** Deterministic hash in [0, 1) — keeps render pure while still looking scattered. */
+function hash(seed: number) {
+  const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+/** Slow drifting dust — monochrome, no rainbow. */
+function Dust({ count = 200 }: { count?: number }) {
+  const ref = useRef<THREE.Points>(null);
+
+  const positions = useMemo(() => {
+    const arr = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      arr[i * 3] = (hash(i * 3 + 1) - 0.5) * 24;
+      arr[i * 3 + 1] = (hash(i * 3 + 2) - 0.5) * 15;
+      arr[i * 3 + 2] = (hash(i * 3 + 3) - 0.5) * 14 - 5;
+    }
+    return arr;
+  }, [count]);
 
   useFrame((state) => {
-    if (!meshRef.current) return;
-    meshRef.current.rotation.x = state.clock.elapsedTime * speed * 0.3;
-    meshRef.current.rotation.y = state.clock.elapsedTime * speed * 0.2;
+    if (!ref.current) return;
+    ref.current.rotation.y = state.clock.elapsedTime * 0.018;
   });
 
   return (
-    <Float speed={speed} rotationIntensity={0.5} floatIntensity={0.8}>
-      <Sphere ref={meshRef} position={position} args={[0.8, 32, 32]}>
-        <MeshDistortMaterial
-          color={color}
-          distort={0.4}
-          speed={2}
-          roughness={0.1}
-          metalness={0.8}
-          transparent
-          opacity={0.7}
-        />
-      </Sphere>
-    </Float>
+    <points ref={ref}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.04}
+        color="#8b7cff"
+        transparent
+        opacity={0.55}
+        sizeAttenuation
+        depthWrite={false}
+      />
+    </points>
   );
 }
 
-function FloatingCube({ position, color }: {
-  position: [number, number, number];
-  color: string;
-}) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  useFrame((state) => {
-    if (!meshRef.current) return;
-    meshRef.current.rotation.x = state.clock.elapsedTime * 0.4;
-    meshRef.current.rotation.y = state.clock.elapsedTime * 0.6;
-    meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5) * 0.3;
+/** One calm, slowly breathing form that leans toward the pointer. */
+function Orb() {
+  const group = useRef<THREE.Group>(null);
+  const pointer = useRef({ x: 0, y: 0 });
+  const { viewport } = useThree();
+
+  // Keep the form in the same relative spot on every screen size.
+  const restX = viewport.width * 0.28;
+  const fit = Math.min(1, viewport.width / 10);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      pointer.current.x = (e.clientX / window.innerWidth - 0.5) * 2;
+      pointer.current.y = (e.clientY / window.innerHeight - 0.5) * 2;
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMove);
+  }, []);
+
+  useFrame((state, delta) => {
+    const g = group.current;
+    if (!g) return;
+    g.rotation.y += delta * 0.08;
+    g.position.x = THREE.MathUtils.lerp(
+      g.position.x,
+      restX + pointer.current.x * 0.3,
+      0.03
+    );
+    g.position.y = THREE.MathUtils.lerp(
+      g.position.y,
+      0.1 - pointer.current.y * 0.3,
+      0.03
+    );
+    g.rotation.x = THREE.MathUtils.lerp(
+      g.rotation.x,
+      pointer.current.y * 0.2,
+      0.04
+    );
+    const t = state.clock.elapsedTime;
+    g.scale.setScalar(fit * (1 + Math.sin(t * 0.5) * 0.015));
   });
 
   return (
-    <mesh ref={meshRef} position={position}>
-      <boxGeometry args={[0.6, 0.6, 0.6]} />
-      <meshStandardMaterial
-        color={color}
-        metalness={0.9}
-        roughness={0.1}
-        transparent
-        opacity={0.6}
-        wireframe={false}
-      />
-    </mesh>
+    <group ref={group} position={[2.3, 0.1, 0]}>
+      <mesh>
+        <icosahedronGeometry args={[1.85, 6]} />
+        <MeshDistortMaterial
+          color="#8b7cff"
+          distort={0.32}
+          speed={1.1}
+          roughness={0.35}
+          metalness={0.5}
+          transparent
+          opacity={0.24}
+        />
+      </mesh>
+      <mesh>
+        <icosahedronGeometry args={[2.3, 1]} />
+        <meshBasicMaterial
+          color="#8b7cff"
+          wireframe
+          transparent
+          opacity={0.1}
+        />
+      </mesh>
+    </group>
   );
 }
 
 export default function ThreeScene() {
   return (
-    <div
-      className="absolute inset-0 pointer-events-none"
-      style={{ zIndex: 1 }}
-    >
+    <div className="absolute inset-0" style={{ zIndex: 0 }} aria-hidden="true">
       <Canvas
-        camera={{ position: [0, 0, 8], fov: 60 }}
+        camera={{ position: [0, 0, 7], fov: 42 }}
+        dpr={[1, 1.6]}
+        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         style={{ background: "transparent" }}
       >
-        <ambientLight intensity={0.2} />
-        <pointLight position={[5, 5, 5]} color="#00d4ff" intensity={2} />
-        <pointLight position={[-5, -5, -5]} color="#a855f7" intensity={1.5} />
-        <pointLight position={[0, 5, -5]} color="#ec4899" intensity={1} />
-
-        <Stars
-          radius={30}
-          depth={50}
-          count={300}
-          factor={2}
-          saturation={1}
-          fade
-          speed={0.5}
-        />
-
-        <FloatingOrb position={[-4, 2, -3]} color="#00d4ff" speed={0.8} />
-        <FloatingOrb position={[4, -2, -4]} color="#a855f7" speed={1.2} />
-        <FloatingOrb position={[0, -3, -5]} color="#ec4899" speed={0.6} />
-
-        <FloatingCube position={[-5, -1, -2]} color="#06b6d4" />
-        <FloatingCube position={[5, 1, -3]} color="#10b981" />
-        <FloatingCube position={[2, 3, -4]} color="#f97316" />
-        <FloatingCube position={[-3, -3, -6]} color="#a855f7" />
+        <ambientLight intensity={0.75} />
+        <directionalLight position={[4, 6, 6]} intensity={1.1} />
+        <pointLight position={[-6, -3, -4]} color="#6ee7d7" intensity={12} />
+        <Dust />
+        <Orb />
       </Canvas>
     </div>
   );
