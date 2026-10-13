@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { MeshDistortMaterial } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -51,6 +51,11 @@ function Dust({ count = 200 }: { count?: number }) {
 function Orb() {
   const group = useRef<THREE.Group>(null);
   const pointer = useRef({ x: 0, y: 0 });
+  const { viewport } = useThree();
+
+  // Keep the form in the same relative spot on every screen size.
+  const restX = viewport.width * 0.28;
+  const fit = Math.min(1, viewport.width / 10);
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
@@ -67,7 +72,7 @@ function Orb() {
     g.rotation.y += delta * 0.08;
     g.position.x = THREE.MathUtils.lerp(
       g.position.x,
-      2.3 + pointer.current.x * 0.35,
+      restX + pointer.current.x * 0.3,
       0.03
     );
     g.position.y = THREE.MathUtils.lerp(
@@ -81,7 +86,7 @@ function Orb() {
       0.04
     );
     const t = state.clock.elapsedTime;
-    g.scale.setScalar(1 + Math.sin(t * 0.5) * 0.015);
+    g.scale.setScalar(fit * (1 + Math.sin(t * 0.5) * 0.015));
   });
 
   return (

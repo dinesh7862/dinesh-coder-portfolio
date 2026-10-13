@@ -9,10 +9,10 @@ import {
   useSpring,
 } from "framer-motion";
 import { EASE } from "./Reveal";
+import { scrollToTop } from "./SmoothScroll";
 
 const SIZE = 48;
 const RADIUS = 21;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export default function BackToTop() {
   const [visible, setVisible] = useState(false);
@@ -33,7 +33,7 @@ export default function BackToTop() {
         <motion.button
           type="button"
           aria-label="Back to top"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          onClick={scrollToTop}
           className="fixed bottom-8 right-6 z-40 grid place-items-center rounded-full sm:right-8"
           style={{
             width: SIZE,
@@ -63,7 +63,6 @@ export default function BackToTop() {
               stroke="var(--accent)"
               strokeWidth="1"
               strokeLinecap="round"
-              strokeDasharray={CIRCUMFERENCE}
               style={{ pathLength: progress }}
             />
           </svg>

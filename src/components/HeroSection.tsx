@@ -55,7 +55,7 @@ export default function HeroSection() {
           Available for new projects
         </motion.div>
 
-        <h1 className="display h1 mt-7" style={{ maxWidth: "15ch" }}>
+        <h1 className="display h1 mt-7">
           <MaskText text="Fast, *calm* products" delay={0.18} />
           <br />
           <MaskText text="for the modern web." delay={0.32} />

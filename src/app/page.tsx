@@ -45,7 +45,7 @@ export default function Home() {
 
       <Navbar />
 
-      <main>
+      <main style={{ position: "relative", zIndex: 1 }}>
         <HeroSection />
 
         {/* Services strip */}
