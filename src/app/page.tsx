@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence } from "framer-motion";
 
 import SmoothScroll from "@/components/SmoothScroll";
+import LoadingScreen from "@/components/LoadingScreen";
 import Marquee from "@/components/Marquee";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -15,9 +16,6 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
 
-const LoadingScreen = dynamic(() => import("@/components/LoadingScreen"), {
-  ssr: false,
-});
 const Cursor = dynamic(() => import("@/components/Cursor"), { ssr: false });
 
 const SERVICES = [
@@ -32,6 +30,12 @@ const SERVICES = [
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const handleComplete = useCallback(() => setLoading(false), []);
+
+  // Safety net: never let the curtain trap the page if something fails to hydrate.
+  useEffect(() => {
+    const timer = window.setTimeout(() => setLoading(false), 4000);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   return (
     <>
